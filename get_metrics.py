@@ -12,6 +12,7 @@ import sys
 # id integer,
 # path VARCHAR(255),
 # id_hoja bigint,
+# web_path VARCHAR(3086),
 # distancia double precision
 # );
 
@@ -21,8 +22,9 @@ class Vecino:
         vec = Vecino()
         vec.id = t[0]
         vec.path = t[1]
-        vec.id_hoja = t[2]
-        vec.distancia = t[3]
+        vec.id_hoja = t[2],
+        vec.web_path = t[3],
+        vec.distancia = t[4]
         return vec
 
 
