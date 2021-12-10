@@ -18,13 +18,14 @@ def connect():
         cur = conn.cursor()
         
         print('Reading json file')
-        query = f"INSERT INTO public.imagenes(path, vector, id_hoja) VALUES"
+        query = f"INSERT INTO public.imagenes(path, vector, id_hoja, web_path) VALUES"
         with open('data.txt') as json_file:
             data = json.load(json_file)
             for p in data['imagenes']:
                 path = p['path']
                 vector = p['vector']
-                query+=f"('{path}', ARRAY{vector}, null),"
+                web_path = p['web_path']
+                query+=f"('{path}', ARRAY{vector}, null, '{web_path}'),"
             query = query[:-1] + ';'
             print('json file read successfully')
         print('Executing Insert query')

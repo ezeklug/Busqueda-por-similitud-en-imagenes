@@ -20,11 +20,11 @@ import sys
 class Vecino:
     def from_tuple(t: Tuple) -> 'Vecino':
         vec = Vecino()
-        vec.id = t[0]
-        vec.path = t[1]
-        vec.id_hoja = t[2],
-        vec.web_path = t[3],
-        vec.distancia = t[4]
+        vec.id = t['id']
+        vec.path = t['path']
+        vec.id_hoja = t['id_hoja'],
+        vec.web_path = t['web_path'],
+        vec.distancia = t['distancia']
         return vec
 
 
@@ -42,7 +42,7 @@ def rotate_image(file_name: str, save_folder='tmp_modified_imgs'):
     Rotates an image by 90 deg
     Stores the result image with the same name inside save_folder'
     """
-    name, extension = file_name.split('.')
+    name, extension = file_name.rsplit('.', 1)
     try:
         colorImage = Image.open(file_name)
         # Rotate it by 90 degrees
@@ -57,7 +57,7 @@ def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp
     Modifies random pixels in an image by random values
     Stores the result image with the same name inside save_folder'
     """
-    name, extension = file_name.split('.')
+    name, extension = file_name.rsplit('.', 1)
     try:
         im = Image.open(file_name)
         pixelMap = im.load()
@@ -74,9 +74,7 @@ def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp
             x = random.randrange(0, im.size[0])
             y = random.randrange(0, im.size[1])
             pixelsNew[x, y] = (rd(), rd(), rd(), rd())
-
         img.save(f'{save_folder}/{name}.{extension}')
-
     except FileNotFoundError as err:
         print(f"File {err.filename} does not exists")
 
@@ -98,9 +96,8 @@ def modify_imgs(imgs_path: List[str]):
 def ten_closest_neighbors(vec, radius: float) -> List[Vecino]:
     data = diez_vecinos_mas_cercanos(vec, radius)
     vecinos = []
-    for elem in data:
-        t = elem[0]
-        vecinos.add(Vecino.from_tuple(t))
+    for t in data:
+        vecinos.append(Vecino.from_tuple(t))
     return vecinos
 
 
@@ -129,7 +126,7 @@ def print_metrics(neighbors: Dict[str, Dict[str, List]]):
     print("Name, Hits")
     for key, d in neighbors.items():
         orig = d['or']
-        mod = d['mod']
+        mod = d['md']
         print(f"{key}, {count_hits(orig,mod)}")
 
 
