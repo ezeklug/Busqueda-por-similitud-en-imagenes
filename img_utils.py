@@ -2,9 +2,10 @@ import random
 from img2vec_pytorch import Img2Vec
 from typing import List
 from PIL import Image
+import os
 
 
-def rotate_image(file_name: str, save_folder='tmp_modified_imgs'):
+def rotate_image(file_name: str, save_folder='tmp_modified_imgs', overwrite=False):
     """
     Rotates an image by 90 deg
     Stores the result image with the same name inside save_folder'
@@ -14,12 +15,17 @@ def rotate_image(file_name: str, save_folder='tmp_modified_imgs'):
         colorImage = Image.open(file_name)
         # Rotate it by 90 degrees
         modified = colorImage.transpose(Image.ROTATE_90)
-        modified.save(f'{save_folder}/{name}.{extension}')
+        file_exists = os.path.isfile(f"{save_folder}/{name}.{extension}")
+        if overwrite:
+            modified.save(f'{save_folder}/{name}.{extension}')
+        elif not overwrite and not file_exists:
+            modified.save(f'{save_folder}/{name}.{extension}')
+
     except FileNotFoundError as err:
         print(f"File {err.filename} does not exists")
 
 
-def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp_modified_imgs'):
+def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp_modified_imgs', overwrite=False):
     """
     Modifies random pixels in an image by random values
     Stores the result image with the same name inside save_folder'
@@ -42,29 +48,46 @@ def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp
             y = random.randrange(0, im.size[1])
             pixelsNew[x, y] = (rd(), rd(), rd(), rd())
 
-        img.save(f'{save_folder}/{name}.{extension}')
+        file_exists = os.path.isfile(f"{save_folder}/{name}.{extension}")
+        if overwrite:
+            img.save(f'{save_folder}/{name}.{extension}')
+        elif not overwrite and not file_exists:
+            img.save(f'{save_folder}/{name}.{extension}')
 
     except FileNotFoundError as err:
         print(f"File {err.filename} does not exists")
 
 
-def modify_imgs(imgs_path: List[str]):
+def modify_imgs(imgs_path: List[str], overwrite=False):
     """
     Modifies and store a list of images. Half of them will be rotated and other half with noise.
     """
     i = 0
     for img in imgs_path:
         if i == 0:
-            modify_pixels_random(img, 50_000)
+            modify_pixels_random(img, 50_000, overwrite=overwrite)
             i += 1
         else:
-            rotate_image(img)
+            rotate_image(img, overwrite=overwrite)
             i -= 1
 
 
 def img_2_arr_str(img_name: str) -> str:
     """
     Returns the array signature of an image in SQL format
+    i.e ARRAY[1,2,3,...,4,5,3]
+    """
+    img2vec = Img2Vec(cuda=False)
+    vec = str(img2vec.get_vec(Image.open(img_name), tensor=True))
+    vec = vec.replace('tensor', 'ARRAY')
+    vec = vec.replace('(', '')
+    vec = vec.replace(')', '')
+    return vec
+
+
+def img_2_arr_str(img_name: str) -> str:
+    """
+    Returns the array signatura of an image in SQL format
     i.e ARRAY[1,2,3,...,4,5,3]
     """
     img2vec = Img2Vec(cuda=False)
