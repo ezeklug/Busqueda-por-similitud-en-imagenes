@@ -19,13 +19,13 @@ import sys
 
 
 class Vecino:
-    def from_tuple(t: Tuple) -> 'Vecino':
+    def from_dic(d: Dict) -> 'Vecino':
         vec = Vecino()
-        vec.id = t['id']
-        vec.path = t['path']
-        vec.id_hoja = t['id_hoja'],
-        vec.web_path = t['web_path'],
-        vec.distancia = t['distancia']
+        vec.id = d['id']
+        vec.path = d['path']
+        vec.id_hoja = d['id_hoja'],
+        vec.web_path = d['web_path'],
+        vec.distancia = d['distancia']
         return vec
 
 
@@ -41,8 +41,8 @@ def get_file_names() -> List[str]:
 def ten_closest_neighbors(vec, radius: float, conn) -> List[Vecino]:
     data = diez_vecinos_mas_cercanos(vec, radius, conn)
     vecinos = []
-    for t in data:
-        vecinos.append(Vecino.from_tuple(t))
+    for d in data:
+        vecinos.append(Vecino.from_dic(d))
     return vecinos
 
 
