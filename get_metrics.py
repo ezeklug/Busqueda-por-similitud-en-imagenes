@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Dict, List, Tuple
 from psycopg2.extras import RealDictCursor
 from app_cliente import diez_vecinos_mas_cercanos, connect, disconnect
@@ -46,7 +47,9 @@ def ten_closest_neighbors(vec, radius: float, conn) -> List[Vecino]:
     return vecinos
 
 
-def print_hits(orig: List[Vecino], mod: List[Vecino]):
+def print_hits_ret_accuracy(orig: List[Vecino], mod: List[Vecino]) -> float:
+    """Print how many hit a query had.
+    Returns the accuracy"""
     n = 5
     i = 0
     for i in range(n):
@@ -66,14 +69,18 @@ def print_first_assertion(orig: List[Vecino], mod: List[Vecino]):
 
 
 def print_metrics(neighbors: Dict[str, Dict[str, List]]):
+    accuracy = []
     for key, d in neighbors.items():
         orig = d['or']
         mod = d['md']
 
         print(key)
         print_first_assertion(orig, mod)
-        print_hits(orig, mod)
+        acc = print_hits_ret_accuracy(orig, mod)
+        accuracy.append(acc)
         print()
+    accs = np.array(accuracy)
+    print("Global accuracy: %.2f std: %.2f" % (accs.mean(), accs.std()))
 
 
 def main():
