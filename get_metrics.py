@@ -49,6 +49,7 @@ def ten_closest_neighbors(vec, radius: float, conn) -> List[Vecino]:
 def print_hits(orig: List[Vecino], mod: List[Vecino]):
     n = 5
     i = 0
+    # TODO: is ok to just check the intersection without the order?
     for m in mod[:n]:
         if m.id in [o.id for o in orig[:n]]:
             i += 1
@@ -58,7 +59,7 @@ def print_hits(orig: List[Vecino], mod: List[Vecino]):
 
 def print_first_assertion(orig: List[Vecino], mod: List[Vecino]):
     print("First assertion: ", end='')
-    if orig[1].id == mod[1].id:
+    if orig[0].id == mod[0].id:
         print("✅")
     else:
         print("❌")
@@ -106,8 +107,9 @@ def main():
             img_2_arr_str(f'{folder_name}/{mod_img}'), radius, conn)
 
     print_metrics(neighbors)
-    
+
     disconnect(conn)
+
 
 if __name__ == '__main__':
     main()

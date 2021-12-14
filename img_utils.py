@@ -74,20 +74,7 @@ def modify_imgs(imgs_path: List[str], overwrite=False):
 
 def img_2_arr_str(img_name: str) -> str:
     """
-    Returns the array signature of an image in SQL format
-    i.e ARRAY[1,2,3,...,4,5,3]
-    """
-    img2vec = Img2Vec(cuda=False)
-    vec = str(img2vec.get_vec(Image.open(img_name), tensor=True))
-    vec = vec.replace('tensor', 'ARRAY')
-    vec = vec.replace('(', '')
-    vec = vec.replace(')', '')
-    return vec
-
-
-def img_2_arr_str(img_name: str) -> str:
-    """
-    Returns the array signatura of an image in SQL format
+    Returns an array in SQL format with a vector representing an image
     i.e ARRAY[1,2,3,...,4,5,3]
     """
     img2vec = Img2Vec(cuda=False)
