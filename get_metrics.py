@@ -57,7 +57,9 @@ def print_hits_ret_accuracy(orig: List[Vecino], mod: List[Vecino]) -> float:
             i += 1
 
     print(f"Hit {i} of {n}")
-    print("Accuracy %.2f" % ((i/n) * 100))
+    accuracy = (i/n) * 100
+    print("Accuracy %.2f" % (accuracy))
+    return accuracy
 
 
 def print_first_assertion(orig: List[Vecino], mod: List[Vecino]):
