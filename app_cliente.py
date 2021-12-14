@@ -29,23 +29,14 @@ def insert(value):
             conn.close()
             print('Database connection closed.')
 
-def diez_vecinos_mas_cercanos(vec, radio):
-    """ Connect to the PostgreSQL database server """
-    conn = None
+def diez_vecinos_mas_cercanos(vec, radio, conn):
     try:
-        params = config()
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         query=f'SELECT * FROM diez_vecinos_mas_cercanos({vec}, {radio})'
         cur.execute(query)
         return cur.fetchall()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')    
+        print(error) 
 
 def place(elem):
     '''
@@ -55,6 +46,21 @@ def place(elem):
     '''
     return sg.Column([[elem]], pad=(0,0))
 
+def connect():
+    """ Connect to the PostgreSQL database server """
+    conn = None
+    try:
+        params = config()
+        print('Connecting to the PostgreSQL database...')
+        conn = psycopg2.connect(**params)
+        return conn
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def disconnect(conn):
+    conn.close()
+    print('Database connection closed.')    
+            
 def main():  
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
     getattr(ssl, '_create_unverified_context', None)):
@@ -195,7 +201,9 @@ def main():
             vec = vec.replace('tensor','ARRAY')
             vec = vec.replace('(','')
             vec = vec.replace(')','')
-            vecinos = diez_vecinos_mas_cercanos(vec, radio)
+            conn = connect()
+            vecinos = diez_vecinos_mas_cercanos(vec, radio, conn)
+            disconnect(conn)
             count=1
             window['id'].update('id')
             window['id_hoja'].update('id hoja')
