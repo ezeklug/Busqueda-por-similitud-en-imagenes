@@ -49,10 +49,10 @@ def ten_closest_neighbors(vec, radius: float, conn) -> List[Vecino]:
 def print_hits(orig: List[Vecino], mod: List[Vecino]):
     n = 5
     i = 0
-    # TODO: is ok to just check the intersection without the order?
-    for m in mod[:n]:
-        if m.id in [o.id for o in orig[:n]]:
+    for i in range(n):
+        if orig[i].id == mod[i].id:
             i += 1
+
     print(f"Hit {i} of {n}")
     print("Accuracy %.2f" % ((i/n) * 100))
 
