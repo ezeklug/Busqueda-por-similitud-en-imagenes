@@ -10,7 +10,7 @@ def rotate_image(file_name: str, save_folder='tmp_modified_imgs', overwrite=Fals
     Rotates an image by 90 deg
     Stores the result image with the same name inside save_folder'
     """
-    name, extension = file_name.split('.')
+    name, extension = file_name.rsplit('.', 1)
     try:
         colorImage = Image.open(file_name)
         # Rotate it by 90 degrees
@@ -30,7 +30,7 @@ def modify_pixels_random(file_name: str, pixels_to_modify: int, save_folder='tmp
     Modifies random pixels in an image by random values
     Stores the result image with the same name inside save_folder'
     """
-    name, extension = file_name.split('.')
+    name, extension = file_name.rsplit('.', 1)
     try:
         im = Image.open(file_name)
         pixelMap = im.load()
@@ -74,7 +74,20 @@ def modify_imgs(imgs_path: List[str], overwrite=False):
 
 def img_2_arr_str(img_name: str) -> str:
     """
-    Returns an array in SQL format with a vector representing an image
+    Returns the array signature of an image in SQL format
+    i.e ARRAY[1,2,3,...,4,5,3]
+    """
+    img2vec = Img2Vec(cuda=False)
+    vec = str(img2vec.get_vec(Image.open(img_name), tensor=True))
+    vec = vec.replace('tensor', 'ARRAY')
+    vec = vec.replace('(', '')
+    vec = vec.replace(')', '')
+    return vec
+
+
+def img_2_arr_str(img_name: str) -> str:
+    """
+    Returns the array signatura of an image in SQL format
     i.e ARRAY[1,2,3,...,4,5,3]
     """
     img2vec = Img2Vec(cuda=False)
